@@ -1,0 +1,475 @@
+import { useState, useEffect, useRef } from “react”;
+import { motion, useInView, useSpring, useMotionValue } from “framer-motion”;
+
+const C = {
+bg:     “#ECEAE7”,
+bg2:    “#E4E2DF”,
+card:   “#DCDAD7”,
+border: “rgba(0,0,0,0.08)”,
+black:  “#111110”,
+mid:    “#6B6B68”,
+dim:    “#9D9D9A”,
+};
+
+/* ── Magnetic link ────────────────────────────────────────────────────────── */
+function Mag({ children, href }) {
+const ref = useRef(null);
+const mx = useMotionValue(0), my = useMotionValue(0);
+const sx = useSpring(mx, { stiffness: 200, damping: 20 });
+const sy = useSpring(my, { stiffness: 200, damping: 20 });
+return (
+<motion.a
+ref={ref}
+href={href}
+target={href?.startsWith(“http”) ? “_blank” : undefined}
+rel=“noopener noreferrer”
+style={{ x: sx, y: sy, display: “inline-block”, textDecoration: “none” }}
+onMouseMove={e => {
+const r = ref.current.getBoundingClientRect();
+mx.set((e.clientX - (r.left + r.width / 2)) * 0.28);
+my.set((e.clientY - (r.top + r.height / 2)) * 0.28);
+}}
+onMouseLeave={() => { mx.set(0); my.set(0); }}
+whileTap={{ scale: 0.97 }}
+>{children}</motion.a>
+);
+}
+
+/* ── CSS blobs (no JS animation dependency) ───────────────────────────────── */
+function Blob3D() {
+return (
+<>
+<style>{`@keyframes fa{0%,100%{transform:translateY(0px) rotate(0deg)}40%{transform:translateY(-14px) rotate(6deg)}70%{transform:translateY(6px) rotate(-3deg)}} @keyframes fb{0%,100%{transform:translateY(0px)}35%{transform:translateY(10px)}75%{transform:translateY(-16px)}} @keyframes fc{0%,100%{transform:translateY(0px) rotate(-22deg)}55%{transform:translateY(-11px) rotate(-17deg)}} @keyframes fd{0%,100%{transform:translateY(0px)}45%{transform:translateY(12px)}} @keyframes statusPulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
+<div style={{ position:“relative”, width:260, height:260, margin:“0 auto” }}>
+<div style={{ position:“absolute”,top:“20%”,left:“8%”,width:130,height:130,borderRadius:“50%”,
+background:“radial-gradient(circle at 35% 35%,#D2D2CE,#9A9A96)”,
+boxShadow:“inset -9px -9px 22px rgba(0,0,0,0.16),inset 4px 4px 12px rgba(255,255,255,0.5)”,
+animation:“fa 5s ease-in-out infinite” }}/>
+<div style={{ position:“absolute”,top:“13%”,left:“47%”,width:84,height:84,borderRadius:“50%”,
+background:“radial-gradient(circle at 35% 35%,#484844,#111110)”,
+boxShadow:“inset -6px -6px 16px rgba(0,0,0,0.55),inset 3px 3px 7px rgba(255,255,255,0.07)”,
+animation:“fb 6.5s ease-in-out infinite” }}/>
+<div style={{ position:“absolute”,top:“36%”,left:“33%”,width:138,height:92,borderRadius:“50%”,
+background:“radial-gradient(circle at 40% 40%,#DADAD6,#B0B0AC)”,
+boxShadow:“inset -8px -8px 20px rgba(0,0,0,0.13),inset 4px 4px 10px rgba(255,255,255,0.55)”,
+animation:“fc 7s ease-in-out infinite” }}/>
+<div style={{ position:“absolute”,top:“68%”,left:“29%”,width:48,height:48,borderRadius:“50%”,
+background:“radial-gradient(circle at 35% 35%,#C0C0BC,#848480)”,
+boxShadow:“inset -4px -4px 10px rgba(0,0,0,0.14),inset 2px 2px 6px rgba(255,255,255,0.5)”,
+animation:“fd 4.5s ease-in-out infinite” }}/>
+<div style={{ position:“absolute”,top:“52%”,left:“11%”,width:30,height:30,borderRadius:“50%”,
+background:“radial-gradient(circle at 35% 35%,#3C3C38,#111110)”,
+boxShadow:“inset -3px -3px 8px rgba(0,0,0,0.6),inset 2px 2px 5px rgba(255,255,255,0.06)”,
+animation:“fa 8s ease-in-out infinite reverse” }}/>
+</div>
+</>
+);
+}
+
+/* ── Navbar — fully visible, not cut off ──────────────────────────────────── */
+function Nav({ scrolled }) {
+return (
+<div style={{
+position: “fixed”, top: 0, left: 0, right: 0, zIndex: 300,
+display: “flex”, justifyContent: “center”,
+padding: “14px 16px 0”,
+pointerEvents: “none”,
+}}>
+<nav style={{
+display: “flex”, alignItems: “center”,
+gap: 2,
+padding: “8px 10px”,
+background: scrolled ? “rgba(236,234,231,0.94)” : “rgba(236,234,231,0.82)”,
+backdropFilter: “blur(20px)”,
+WebkitBackdropFilter: “blur(20px)”,
+border: `1px solid ${C.border}`,
+borderRadius: 100,
+boxShadow: scrolled ? “0 4px 20px rgba(0,0,0,0.09)” : “0 2px 12px rgba(0,0,0,0.05)”,
+transition: “all 0.3s”,
+pointerEvents: “all”,
+width: “100%”,
+maxWidth: 420,
+justifyContent: “space-between”,
+}}>
+{/* Logo */}
+<div style={{
+width:34, height:34,
+border:`1.5px solid ${C.black}`,
+borderRadius:8,
+display:“flex”, alignItems:“center”, justifyContent:“center”,
+flexShrink:0,
+}}>
+<span style={{ fontFamily:“Georgia,serif”, fontSize:13, color:C.black }}>SK</span>
+</div>
+
+```
+    {["Work","About","Skills","Contact"].map(l => (
+      <a key={l} href={`#${l.toLowerCase()}`} style={{
+        fontFamily:"-apple-system,'Helvetica Neue',sans-serif",
+        fontSize:14, fontWeight:400, color:C.mid,
+        textDecoration:"none", padding:"5px 10px",
+        borderRadius:100, transition:"all 0.2s",
+      }}
+        onMouseEnter={e=>{e.target.style.color=C.black;e.target.style.background="rgba(0,0,0,0.05)"}}
+        onMouseLeave={e=>{e.target.style.color=C.mid;e.target.style.background="transparent"}}
+      >{l}</a>
+    ))}
+  </nav>
+</div>
+```
+
+);
+}
+
+/* ── Hero — everything rendered immediately, no initial:opacity:0 ─────────── */
+function Hero() {
+return (
+<section id=“hero” style={{
+minHeight: “100vh”,
+background: C.bg,
+display: “flex”,
+flexDirection: “column”,
+alignItems: “center”,
+justifyContent: “center”,
+padding: “110px 28px 70px”,
+gap: 36,
+}}>
+{/* Blob — pure CSS animation, always visible */}
+<div style={{ animation:“fa 5s ease-in-out infinite” }}>
+<Blob3D />
+</div>
+
+```
+  {/* Text block — NO motion initial, always rendered */}
+  <div style={{ width:"100%", maxWidth:480, textAlign:"left" }}>
+
+    {/* Status badge */}
+    <div style={{
+      display:"inline-flex", alignItems:"center", gap:8,
+      background:"rgba(0,0,0,0.06)", borderRadius:100,
+      padding:"6px 14px", marginBottom:20,
+    }}>
+      <span style={{ width:6,height:6,borderRadius:"50%",background:"#4CAF50",flexShrink:0,
+        animation:"statusPulse 2.5s infinite" }}/>
+      <span style={{ fontFamily:"-apple-system,'Helvetica Neue',sans-serif",fontSize:11,color:C.mid,letterSpacing:"0.06em" }}>
+        Available for opportunities
+      </span>
+    </div>
+
+    {/* Name */}
+    <h1 style={{
+      fontFamily:"Georgia,'Times New Roman',serif",
+      fontSize:"clamp(44px,11vw,78px)",
+      fontWeight:400, color:C.black,
+      lineHeight:1.05, letterSpacing:"-0.03em",
+      marginBottom:12,
+    }}>Sinan Khalid</h1>
+
+    {/* Role */}
+    <p style={{
+      fontFamily:"-apple-system,'Helvetica Neue',sans-serif",
+      fontSize:"clamp(15px,2.5vw,18px)",
+      color:C.mid, lineHeight:1.6, marginBottom:32,
+    }}>Cybersecurity @ KTU · Full-Stack Explorer</p>
+
+    {/* Buttons */}
+    <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
+      <Mag href="#work">
+        <div style={{ padding:"12px 26px",background:C.black,color:"#fff",fontFamily:"-apple-system,'Helvetica Neue',sans-serif",fontSize:13,fontWeight:500,borderRadius:100,cursor:"pointer" }}>
+          View Work
+        </div>
+      </Mag>
+      <Mag href="#contact">
+        <div style={{ padding:"12px 26px",background:"rgba(0,0,0,0.07)",color:C.black,fontFamily:"-apple-system,'Helvetica Neue',sans-serif",fontSize:13,fontWeight:400,borderRadius:100,cursor:"pointer" }}>
+          Get in touch
+        </div>
+      </Mag>
+    </div>
+  </div>
+
+  {/* Scroll line */}
+  <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:6,opacity:0.5 }}>
+    <div style={{ width:1,height:32,background:C.mid }}/>
+    <span style={{ fontFamily:"-apple-system,'Helvetica Neue',sans-serif",fontSize:10,color:C.dim,letterSpacing:"0.16em" }}>SCROLL</span>
+  </div>
+</section>
+```
+
+);
+}
+
+/* ── Section header (scroll-triggered but safe fallback) ──────────────────── */
+function SectionHead({ label, title }) {
+const ref = useRef(null);
+const inView = useInView(ref, { once: true, margin: “-40px” });
+return (
+<div ref={ref} style={{ marginBottom:36, opacity: inView ? 1 : 0, transform: inView ? “translateY(0)” : “translateY(20px)”, transition:“opacity 0.6s ease, transform 0.6s ease” }}>
+<p style={{ fontFamily:”-apple-system,‘Helvetica Neue’,sans-serif”,fontSize:11,color:C.dim,letterSpacing:“0.16em”,textTransform:“uppercase”,marginBottom:8 }}>{label}</p>
+<h2 style={{ fontFamily:“Georgia,‘Times New Roman’,serif”,fontSize:“clamp(30px,6vw,58px)”,fontWeight:400,color:C.black,letterSpacing:”-0.025em”,lineHeight:1.1 }}>{title}</h2>
+</div>
+);
+}
+
+/* ── Project card ─────────────────────────────────────────────────────────── */
+const PROJECTS = [
+{ num:“01”, name:“VenueBook”,      headline:“Built on a Phone.\nScaled for the Web.”, desc:“A sleek auditorium booking prototype — real-time seat selection, role-based access, and a mobile-first UI that feels native.”, tags:[“React Native”,“Firebase”,“Node.js”] },
+{ num:“02”, name:“Resume Builder”, headline:“Precision in\nEvery Line.”,              desc:“A web app that streamlines professional identity. Dynamic templates, real-time preview, and PDF export.”,                         tags:[“React”,“Tailwind”,“jsPDF”] },
+];
+
+function Card({ p, i }) {
+const ref = useRef(null);
+const inView = useInView(ref, { once: true, margin: “-30px” });
+const [hov, setHov] = useState(false);
+return (
+<div
+ref={ref}
+onMouseEnter={()=>setHov(true)}
+onMouseLeave={()=>setHov(false)}
+style={{
+background: hov ? C.card : C.bg2,
+border:`1px solid ${C.border}`,
+borderRadius:20,
+padding:“clamp(22px,3.5vw,38px)”,
+display:“flex”, flexDirection:“column”, justifyContent:“space-between”,
+minHeight:280, cursor:“pointer”, position:“relative”, overflow:“hidden”,
+boxShadow: hov ? “0 6px 28px rgba(0,0,0,0.07)” : “none”,
+transition:“background 0.3s, box-shadow 0.3s”,
+opacity: inView ? 1 : 0,
+transform: inView ? “translateY(0)” : “translateY(30px)”,
+/* stagger via transition-delay */
+transitionDelay: `${i*0.12}s`,
+transitionProperty:“opacity, transform, background, box-shadow”,
+transitionDuration:“0.6s, 0.6s, 0.3s, 0.3s”,
+transitionTimingFunction:“ease”,
+}}
+>
+<span style={{ position:“absolute”,bottom:-6,right:14,fontFamily:“Georgia,serif”,fontSize:“clamp(64px,12vw,110px)”,fontWeight:400,color:“rgba(0,0,0,0.04)”,lineHeight:1,userSelect:“none” }}>{p.num}</span>
+<div>
+<p style={{ fontFamily:”-apple-system,‘Helvetica Neue’,sans-serif”,fontSize:10,color:C.dim,letterSpacing:“0.16em”,textTransform:“uppercase”,marginBottom:16 }}>{p.name}</p>
+<h3 style={{ fontFamily:“Georgia,‘Times New Roman’,serif”,fontSize:“clamp(24px,4vw,42px)”,fontWeight:400,color:C.black,lineHeight:1.2,letterSpacing:”-0.02em”,marginBottom:12,whiteSpace:“pre-line” }}>{p.headline}</h3>
+<p style={{ fontFamily:”-apple-system,‘Helvetica Neue’,sans-serif”,fontSize:“clamp(13px,1.5vw,15px)”,color:C.mid,lineHeight:1.75,maxWidth:460 }}>{p.desc}</p>
+</div>
+<div style={{ display:“flex”,alignItems:“center”,justifyContent:“space-between”,flexWrap:“wrap”,gap:8,marginTop:22,position:“relative”,zIndex:1 }}>
+<div style={{ display:“flex”,gap:6,flexWrap:“wrap” }}>
+{p.tags.map(t=><span key={t} style={{ fontFamily:”-apple-system,‘Helvetica Neue’,sans-serif”,fontSize:11,color:C.mid,padding:“4px 10px”,background:“rgba(0,0,0,0.05)”,borderRadius:100 }}>{t}</span>)}
+</div>
+<span style={{ fontSize:20,color:C.black,fontFamily:“Georgia,serif”,transition:“transform 0.22s”,transform:hov?“translateX(5px)”:“none” }}>→</span>
+</div>
+</div>
+);
+}
+
+function Projects() {
+return (
+<section id=“work” style={{ padding:“clamp(80px,10vw,120px) clamp(20px,5vw,56px)”,maxWidth:1160,margin:“0 auto” }}>
+<SectionHead label="Selected Work" title="What I've Built" />
+<div style={{ display:“flex”,flexDirection:“column”,gap:12 }}>
+{PROJECTS.map((p,i)=><Card key={p.num} p={p} i={i}/>)}
+</div>
+</section>
+);
+}
+
+/* ── Terminal ─────────────────────────────────────────────────────────────── */
+const TERM = [
+{t:”$ whoami”,           dim:true},
+{t:”> sinan_khalid”,     dim:false},
+{t:”$ cat major.txt”,    dim:true},
+{t:”> Cybersecurity”,    dim:false, bold:true},
+{t:”$ uptime”,           dim:true},
+{t:”> 1yr @ KTU — still completing…”, dim:false},
+];
+
+function Terminal() {
+const ref = useRef(null);
+const inView = useInView(ref, { once: true, margin:”-30px” });
+return (
+<div ref={ref} style={{
+background:C.bg, border:`1px solid ${C.border}`, borderRadius:18, overflow:“hidden”,
+opacity:inView?1:0, transform:inView?“scale(1)”:“scale(0.97)”,
+transition:“opacity 0.6s ease, transform 0.6s ease”,
+}}>
+<div style={{ padding:“11px 14px”,borderBottom:`1px solid ${C.border}`,display:“flex”,alignItems:“center”,gap:6 }}>
+{[”#FF5F56”,”#FFBD2E”,”#27C93F”].map(c=><div key={c} style={{ width:10,height:10,borderRadius:“50%”,background:c }}/>)}
+<span style={{ marginLeft:8,fontFamily:“monospace”,fontSize:11,color:C.dim,letterSpacing:“0.05em” }}>bash — sinan@ktu</span>
+</div>
+<div style={{ padding:“18px 16px 26px” }}>
+{TERM.map((l,i)=>(
+<div key={i} style={{
+fontFamily:”‘Courier New’,Courier,monospace”,
+fontSize:“clamp(12px,1.4vw,13px)”,
+color:l.dim?C.dim:C.black,
+fontWeight:l.bold?700:400,
+marginBottom:7, letterSpacing:“0.02em”,
+opacity:inView?1:0,
+transition:`opacity 0.35s ease ${0.3+i*0.18}s`,
+}}>
+{l.t}
+{i===TERM.length-1&&inView&&(
+<span style={{ display:“inline-block”,width:7,height:12,background:C.black,marginLeft:3,verticalAlign:“text-bottom”,animation:“statusPulse 1s infinite” }}/>
+)}
+</div>
+))}
+</div>
+</div>
+);
+}
+
+/* ── About ────────────────────────────────────────────────────────────────── */
+function About() {
+const ref = useRef(null);
+const inView = useInView(ref, { once: true, margin:”-40px” });
+return (
+<section id=“about” style={{ background:C.bg2,padding:“clamp(80px,10vw,120px) clamp(20px,5vw,56px)” }}>
+<div style={{ maxWidth:1160,margin:“0 auto” }}>
+<SectionHead label=“About” title={<>First year.<br/><em style={{ color:C.mid,fontWeight:400 }}>Zero compromises.</em></>} />
+<div ref={ref} style={{ display:“grid”,gridTemplateColumns:“repeat(auto-fit,minmax(280px,1fr))”,gap:“clamp(36px,5vw,72px)”,alignItems:“start” }}>
+<div style={{ opacity:inView?1:0,transform:inView?“translateY(0)”:“translateY(20px)”,transition:“opacity 0.65s ease, transform 0.65s ease” }}>
+{[
+“I’m Sinan Khalid, a Cybersecurity student at APJ Abdul Kalam Technological University. While others were finding their footing in first year, I was shipping.”,
+“I believe the best security comes from understanding how things are built — so I build. Full-stack web apps, mobile prototypes, and anything that pushes what a student "should" be doing.”,
+].map((t,i)=>(
+<p key={i} style={{ fontFamily:”-apple-system,‘Helvetica Neue’,sans-serif”,fontSize:“clamp(14px,1.6vw,16px)”,color:C.mid,lineHeight:1.85,marginBottom:14 }}>{t}</p>
+))}
+<div style={{ display:“grid”,gridTemplateColumns:“1fr 1fr”,gap:10,marginTop:28 }}>
+{[{v:“2+”,l:“Projects”},{v:“1yr”,l:”@ KTU”},{v:“∞”,l:“Curiosity”},{v:“Now”,l:“Open to Work”}].map((s,i)=>(
+<div key={i} style={{ background:“rgba(0,0,0,0.04)”,borderRadius:14,padding:“16px 18px”,
+opacity:inView?1:0,transition:`opacity 0.5s ease ${0.2+i*0.08}s` }}>
+<div style={{ fontFamily:“Georgia,serif”,fontSize:“clamp(24px,3.5vw,34px)”,fontWeight:400,color:C.black,lineHeight:1 }}>{s.v}</div>
+<div style={{ fontFamily:”-apple-system,‘Helvetica Neue’,sans-serif”,fontSize:11,color:C.dim,marginTop:4,letterSpacing:“0.05em” }}>{s.l}</div>
+</div>
+))}
+</div>
+</div>
+<Terminal />
+</div>
+</div>
+</section>
+);
+}
+
+/* ── Skills ───────────────────────────────────────────────────────────────── */
+const SKILLS = [“React”,“Node.js”,“Framer Motion”,“Security Auditing”,“Python”,“Linux”,“SQL”,“Wireshark”,“Git”,“Figma”,“TypeScript”,“Docker”];
+
+function Skills() {
+const ref = useRef(null);
+const inView = useInView(ref, { once: true, margin:”-40px” });
+return (
+<section id=“skills” style={{ padding:“clamp(80px,10vw,120px) clamp(20px,5vw,56px)”,maxWidth:1160,margin:“0 auto” }}>
+<SectionHead label="Arsenal" title="The Tech Stack" />
+<div ref={ref} style={{ display:“flex”,flexWrap:“wrap”,gap:8 }}>
+{SKILLS.map((s,i)=>(
+<div key={s} style={{
+padding:“9px 18px”,
+background:“rgba(0,0,0,0.05)”,
+borderRadius:100,
+fontFamily:”-apple-system,‘Helvetica Neue’,sans-serif”,
+fontSize:13, color:C.black, fontWeight:400, cursor:“default”,
+opacity:inView?1:0,
+transform:inView?“translateY(0)”:“translateY(12px)”,
+transition:`opacity 0.4s ease ${0.1+i*0.04}s, transform 0.4s ease ${0.1+i*0.04}s`,
+}}
+onMouseEnter={e=>{e.currentTarget.style.background=“rgba(0,0,0,0.1)”;e.currentTarget.style.transform=“translateY(-3px)”}}
+onMouseLeave={e=>{e.currentTarget.style.background=“rgba(0,0,0,0.05)”;e.currentTarget.style.transform=“translateY(0)”}}
+>{s}</div>
+))}
+</div>
+</section>
+);
+}
+
+/* ── Contact ──────────────────────────────────────────────────────────────── */
+const SOCIALS = [
+{label:“GitHub”,  href:“https://github.com/sinankhalid-sketch”, tag:“gh”},
+{label:“LinkedIn”,href:“https://linkedin.com”,                  tag:“in”},
+{label:“Email”,   href:“mailto:sinan@example.com”,              tag:”@”},
+];
+
+function Contact() {
+const ref = useRef(null);
+const inView = useInView(ref, { once: true, margin:”-40px” });
+return (
+<section id=“contact” style={{ background:C.bg2,padding:“clamp(80px,10vw,120px) clamp(20px,5vw,56px) clamp(60px,8vw,90px)” }}>
+<div ref={ref} style={{ maxWidth:1160,margin:“0 auto”,textAlign:“center” }}>
+<p style={{ fontFamily:”-apple-system,‘Helvetica Neue’,sans-serif”,fontSize:11,color:C.dim,letterSpacing:“0.16em”,textTransform:“uppercase”,marginBottom:20 }}>Contact</p>
+
+```
+    <div style={{ overflow:"hidden" }}>
+      <h2 style={{
+        fontFamily:"Georgia,'Times New Roman',serif",
+        fontSize:"clamp(58px,15vw,148px)",
+        fontWeight:400, fontStyle:"italic",
+        color:C.mid, lineHeight:0.9, letterSpacing:"-0.04em",
+        opacity:inView?1:0, transform:inView?"translateY(0)":"translateY(60px)",
+        transition:"opacity 0.8s ease, transform 0.8s ease",
+      }}>Let's</h2>
+    </div>
+    <div style={{ overflow:"hidden" }}>
+      <h2 style={{
+        fontFamily:"Georgia,'Times New Roman',serif",
+        fontSize:"clamp(58px,15vw,148px)",
+        fontWeight:400,
+        color:C.black, lineHeight:0.9, letterSpacing:"-0.04em",
+        opacity:inView?1:0, transform:inView?"translateY(0)":"translateY(60px)",
+        transition:"opacity 0.8s ease 0.1s, transform 0.8s ease 0.1s",
+      }}>Connect.</h2>
+    </div>
+
+    <p style={{
+      fontFamily:"-apple-system,'Helvetica Neue',sans-serif",fontSize:"clamp(14px,1.6vw,16px)",
+      color:C.mid,marginTop:24,marginBottom:36,lineHeight:1.75,
+      maxWidth:400,marginLeft:"auto",marginRight:"auto",
+      opacity:inView?1:0,transition:"opacity 0.6s ease 0.4s",
+    }}>
+      Open to internships, collaborations, and conversations about cybersecurity and full-stack development.
+    </p>
+
+    <div style={{ display:"flex",justifyContent:"center",gap:10,flexWrap:"wrap",marginBottom:64,
+      opacity:inView?1:0,transition:"opacity 0.6s ease 0.5s" }}>
+      {SOCIALS.map(s=>(
+        <Mag key={s.label} href={s.href}>
+          <div style={{ display:"flex",alignItems:"center",gap:8,padding:"11px 22px",background:"rgba(0,0,0,0.06)",borderRadius:100,fontFamily:"-apple-system,'Helvetica Neue',sans-serif",fontSize:13,color:C.black,fontWeight:400,cursor:"pointer" }}
+            onMouseEnter={e=>e.currentTarget.style.background="rgba(0,0,0,0.1)"}
+            onMouseLeave={e=>e.currentTarget.style.background="rgba(0,0,0,0.06)"}
+          >
+            <span style={{ fontFamily:"monospace",fontSize:10,color:C.dim }}>[{s.tag}]</span>
+            {s.label}
+          </div>
+        </Mag>
+      ))}
+    </div>
+
+    <div style={{ width:"100%",height:1,background:C.border,marginBottom:20 }}/>
+    <div style={{ display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:8 }}>
+      <span style={{ fontFamily:"-apple-system,'Helvetica Neue',sans-serif",fontSize:11,color:C.dim,letterSpacing:"0.08em" }}>© 2025 SINAN KHALID</span>
+      <span style={{ fontFamily:"-apple-system,'Helvetica Neue',sans-serif",fontSize:11,color:C.dim,letterSpacing:"0.08em" }}>CYBERSECURITY @ KTU</span>
+    </div>
+  </div>
+</section>
+```
+
+);
+}
+
+/* ── App ──────────────────────────────────────────────────────────────────── */
+export default function Portfolio() {
+const [scrolled, setScrolled] = useState(false);
+useEffect(() => {
+const el = document.getElementById(”__scroll_root”) || window;
+const handler = () => setScrolled((el.scrollY ?? el.scrollTop ?? 0) > 40);
+window.addEventListener(“scroll”, handler, { passive:true });
+return () => window.removeEventListener(“scroll”, handler);
+}, []);
+
+return (
+<div style={{ background:C.bg,minHeight:“100vh”,color:C.black,overflowX:“hidden” }}>
+<style>{`*{margin:0;padding:0;box-sizing:border-box} html{scroll-behavior:smooth} body{background:${C.bg};-webkit-font-smoothing:antialiased} ::-webkit-scrollbar{width:3px} ::-webkit-scrollbar-track{background:${C.bg}} ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:2px} @keyframes statusPulse{0%,100%{opacity:1}50%{opacity:0.25}} @keyframes fa{0%,100%{transform:translateY(0px)}50%{transform:translateY(-10px)}}`}</style>
+<Nav scrolled={scrolled} />
+<Hero />
+<Projects />
+<About />
+<Skills />
+<Contact />
+</div>
+);
+}
