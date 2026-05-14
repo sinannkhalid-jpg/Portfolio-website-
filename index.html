@@ -424,12 +424,16 @@ transition:all .18s;
 (()=>{
   const W=['React','Node.js','Cybersecurity','Full-Stack','Security Auditing','Python','Linux','TypeScript','Git','Figma','Docker','Wireshark','SQL'];
   const t=document.getElementById('tickerTrack');
-  [...W,...W].forEach(w=>{const s=document.createElement('span');s.className='t-item';s.innerHTML=w+'<span class="t-dot"></span>';t.appendChild(s);});
+  const f=document.createDocumentFragment();
+  [...W,...W].forEach(w=>{const s=document.createElement('span');s.className='t-item';s.innerHTML=w+'<span class="t-dot"></span>';f.appendChild(s);});
+  t.appendChild(f);
 })();
 (()=>{
   const S=['React','React Native','Node.js','Python','TypeScript','Tailwind CSS','Firebase','Gemini AI','Linux','Wireshark','SQL','Git','Figma','Security Auditing','Docker'];
   const c=document.getElementById('skCloud');
-  S.forEach(s=>{const d=document.createElement('span');d.className='sk';d.textContent=s;c.appendChild(d);});
+  const f=document.createDocumentFragment();
+  S.forEach(s=>{const d=document.createElement('span');d.className='sk';d.textContent=s;f.appendChild(d);});
+  c.appendChild(f);
 })();
 (()=>{
   const el=document.getElementById('clk');
