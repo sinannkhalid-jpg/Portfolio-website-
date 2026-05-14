@@ -424,7 +424,7 @@ transition:all .18s;
 (()=>{
   const W=['React','Node.js','Cybersecurity','Full-Stack','Security Auditing','Python','Linux','TypeScript','Git','Figma','Docker','Wireshark','SQL'];
   const t=document.getElementById('tickerTrack');
-  [...W,...W].forEach(w=>{const s=document.createElement('span');s.className='t-item';s.innerHTML=w+'<span class="t-dot"></span>';t.appendChild(s);});
+  [...W,...W].forEach(w=>{const s=document.createElement('span');s.className='t-item';s.textContent=w;const d=document.createElement('span');d.className='t-dot';s.appendChild(d);t.appendChild(s);});
 })();
 (()=>{
   const S=['React','React Native','Node.js','Python','TypeScript','Tailwind CSS','Firebase','Gemini AI','Linux','Wireshark','SQL','Git','Figma','Security Auditing','Docker'];
