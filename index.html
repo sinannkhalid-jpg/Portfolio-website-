@@ -266,10 +266,10 @@ transition:all .18s;
   <header class="nav">
     <div class="nav-logo">SK</div>
     <div class="nav-sp"></div>
-    <a href="#work" onclick="document.getElementById('work').scrollIntoView({behavior:'smooth'});return false;">Work</a>
-    <a href="#about" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'});return false;">About</a>
-    <a href="#skills" onclick="document.getElementById('skills').scrollIntoView({behavior:'smooth'});return false;">Skills</a>
-    <a href="#contact" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'});return false;">Connect</a>
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Connect</a>
   </header>
 
   <div class="blob-wrap">
@@ -425,11 +425,16 @@ transition:all .18s;
   const W=['React','Node.js','Cybersecurity','Full-Stack','Security Auditing','Python','Linux','TypeScript','Git','Figma','Docker','Wireshark','SQL'];
   const t=document.getElementById('tickerTrack');
   [...W,...W].forEach(w=>{const s=document.createElement('span');s.className='t-item';s.textContent=w;const d=document.createElement('span');d.className='t-dot';s.appendChild(d);t.appendChild(s);});
+  const f=document.createDocumentFragment();
+  [...W,...W].forEach(w=>{const s=document.createElement('span');s.className='t-item';s.innerHTML=w+'<span class="t-dot"></span>';f.appendChild(s);});
+  t.appendChild(f);
 })();
 (()=>{
   const S=['React','React Native','Node.js','Python','TypeScript','Tailwind CSS','Firebase','Gemini AI','Linux','Wireshark','SQL','Git','Figma','Security Auditing','Docker'];
   const c=document.getElementById('skCloud');
-  S.forEach(s=>{const d=document.createElement('span');d.className='sk';d.textContent=s;c.appendChild(d);});
+  const f=document.createDocumentFragment();
+  S.forEach(s=>{const d=document.createElement('span');d.className='sk';d.textContent=s;f.appendChild(d);});
+  c.appendChild(f);
 })();
 (()=>{
   const el=document.getElementById('clk');
